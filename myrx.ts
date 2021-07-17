@@ -1,5 +1,9 @@
-import * as Rx from "rxjs";
+import * as Rx from 'rxjs';
 
-let outer: Rx.Observable<any> = Rx.from(['A','B','C','D']);
-let inner = Rx.interval(1000).pipe(Rx.take(4));
-
+let outer: Rx.Observable<string> = Rx.from(['Outer-start', 'Outer-second', 'Outer-end']);
+let inner: Rx.Observable<string> = Rx.from([
+  'Inner-start',
+  'Inner-second',
+  'Inner-third',
+  'Inner-end',
+]);

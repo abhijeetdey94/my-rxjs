@@ -27,3 +27,11 @@ var inner = Rx.from([
     'Inner-third',
     'Inner-end',
 ]);
+var obs$ = outer.pipe(Rx.map(function (outerVal) {
+    return inner.pipe(Rx.map(function (innerVal) {
+        return outerVal + "   " + innerVal;
+    }));
+}));
+obs$.pipe(Rx.combineAll()).subscribe(function (val) {
+    console.log(val);
+});
