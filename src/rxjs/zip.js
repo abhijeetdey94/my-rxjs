@@ -20,16 +20,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Rx = __importStar(require("rxjs"));
-var outer = Rx.from(['A', 'B', 'C', 'D']).pipe(Rx.delay(2000));
-// let outer = Rx.interval(4000).pipe(Rx.take(4));
-var inner = Rx.interval(1000).pipe(Rx.take(4));
-var mergedObs = outer.pipe(Rx.mergeMap(function (outerVal) {
-    return inner.pipe(Rx.map(function (innerVal) {
-        // console.log('___________');
-        return outerVal + "-" + innerVal;
-    }));
-}));
-mergedObs.subscribe(function (val) {
-    // mergedObs prints (A-0 B-0 C-0 D-0) (A-1 B-1 C-1 D-1) (A-2 B-2 C-2 D-2) ...
-    console.log(val);
-});
+var obs1 = Rx.from(['a1', 'b1', 'c1']);
+var obs2 = Rx.from(['a2', 'b2', 'c2']);
+var obs3 = Rx.from(['a3', 'b3', 'c3']);
+var zipExample = Rx.zip(obs1, obs2, obs3);
+zipExample.subscribe(console.log);
+/**
+ * [ 'a1', 'a2', 'a3' ]
+ * [ 'b1', 'b2', 'b3' ]
+ * [ 'c1', 'c2', 'c3' ]
+ */

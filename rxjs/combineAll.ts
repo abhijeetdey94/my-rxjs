@@ -9,9 +9,9 @@ let inner: Rx.Observable<string> = Rx.from([
 ]);
 
 const obs$ = outer.pipe(
-  Rx.map((outerVal) => {
+  Rx.map((outerVal: string) => {
     return inner.pipe(
-      Rx.map((innerVal) => {
+      Rx.map((innerVal: string) => {
         return `${outerVal}   ${innerVal}`;
       })
     );

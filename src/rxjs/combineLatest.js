@@ -20,16 +20,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Rx = __importStar(require("rxjs"));
-var outer = Rx.from(['A', 'B', 'C', 'D']).pipe(Rx.delay(2000));
-// let outer = Rx.interval(4000).pipe(Rx.take(4));
-var inner = Rx.interval(1000).pipe(Rx.take(4));
-var mergedObs = outer.pipe(Rx.mergeMap(function (outerVal) {
-    return inner.pipe(Rx.map(function (innerVal) {
-        // console.log('___________');
-        return outerVal + "-" + innerVal;
-    }));
-}));
-mergedObs.subscribe(function (val) {
-    // mergedObs prints (A-0 B-0 C-0 D-0) (A-1 B-1 C-1 D-1) (A-2 B-2 C-2 D-2) ...
-    console.log(val);
+// timerOne emits first value at 1s, then once every 4s
+var timerOne$ = Rx.timer(1000, 4000);
+// timerTwo emits first value at 2s, then once every 4s
+var timerTwo$ = Rx.timer(2000, 4000);
+// timerThree emits first value at 3s, then once every 4s
+var timerThree$ = Rx.timer(3000, 4000);
+// when one timer emits, emit the latest values from each timer as an array
+Rx.combineLatest(timerOne$, timerTwo$, timerThree$).subscribe(function (_a) {
+    var timerValOne = _a[0], timerValTwo = _a[1], timerValThree = _a[2];
+    /*
+      Example:
+    timerThree first tick: 'Timer One Latest: 0, Timer Two Latest: 0, Timer Three Latest: 0
+    timerOne second tick: 'Timer One Latest: 1, Timer Two Latest: 0, Timer Three Latest: 0
+    timerTwo second tick: 'Timer One Latest: 1, Timer Two Latest: 1, Timer Three Latest: 0
+  */
+    console.log("Timer One Latest: " + timerValOne + ",\n     Timer Two Latest: " + timerValTwo + ",\n     Timer Three Latest: " + timerValThree);
 });

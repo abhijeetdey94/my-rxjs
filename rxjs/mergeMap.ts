@@ -1,12 +1,14 @@
 import * as Rx from "rxjs";
 
-let outer: Rx.Observable<any> = Rx.from(['A','B','C','D']);
+let outer: Rx.Observable<any> = Rx.from(['A','B','C','D']).pipe(Rx.delay(2000));
+// let outer = Rx.interval(4000).pipe(Rx.take(4));
 let inner = Rx.interval(1000).pipe(Rx.take(4));
 
 let mergedObs = outer.pipe(
     Rx.mergeMap((outerVal) => {
         return inner.pipe(
             Rx.map((innerVal) => {
+                // console.log('___________');
                 return `${outerVal}-${innerVal}`
             })
         )

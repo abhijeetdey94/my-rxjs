@@ -20,16 +20,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Rx = __importStar(require("rxjs"));
-var outer = Rx.from(['A', 'B', 'C', 'D']).pipe(Rx.delay(2000));
-// let outer = Rx.interval(4000).pipe(Rx.take(4));
-var inner = Rx.interval(1000).pipe(Rx.take(4));
-var mergedObs = outer.pipe(Rx.mergeMap(function (outerVal) {
-    return inner.pipe(Rx.map(function (innerVal) {
-        // console.log('___________');
-        return outerVal + "-" + innerVal;
-    }));
-}));
-mergedObs.subscribe(function (val) {
-    // mergedObs prints (A-0 B-0 C-0 D-0) (A-1 B-1 C-1 D-1) (A-2 B-2 C-2 D-2) ...
-    console.log(val);
-});
+//emit every 2.5 seconds
+var first = Rx.interval(1000);
+//emit every 2 seconds
+var second = Rx.interval(1000);
+//emit every 1.5 seconds
+var third = Rx.interval(1000);
+//emit every 1 second
+var fourth = Rx.interval(1000);
+//emit outputs from one observable
+var example = Rx.merge(first.pipe(Rx.mapTo('FIRST!')), second.pipe(Rx.mapTo('SECOND!')), third.pipe(Rx.mapTo('THIRD')), fourth.pipe(Rx.mapTo('FOURTH')));
+//output: "FOURTH", "THIRD", "SECOND!", "FOURTH", "FIRST!", "THIRD", "FOURTH"
+var subscribe = example.subscribe(function (val) { return console.log(val); });
