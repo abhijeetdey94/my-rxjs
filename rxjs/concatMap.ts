@@ -1,15 +1,26 @@
 import * as Rx from 'rxjs';
 
+console.log('CONCATMAP DEMO')
 let innerObsCounter = 0;
-let outer: Rx.Observable<any> = Rx.from(['#1', '#2']).pipe(
-  Rx.tap((val) => {
-    console.log(val);
+// let outer: Rx.Observable<any> = Rx.from(['#1', '#2', '#3', '#4']).pipe(
+//   Rx.tap((val) => {
+//     console.log(val);
+//   }),
+//   Rx.finalize(() => {
+//     console.log('______Source observable completed.______');
+//   })
+// );
+
+let outer: Rx.Observable<any> = Rx.interval(1000).pipe(
+  Rx.tap((value) => {
+    console.log(value);
   }),
+  Rx.take(10),
   Rx.finalize(() => {
-    console.log('______Source observable completed.______');
+    console.log('______Outer observable has completed.______');
   })
 );
-let inner = Rx.interval(1000).pipe(Rx.take(4));
+let inner = Rx.interval(3000).pipe(Rx.take(2));
 
 let concatenatedObs = outer.pipe(
   Rx.concatMap((outerVal) => {

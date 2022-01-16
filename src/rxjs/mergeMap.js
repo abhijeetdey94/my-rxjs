@@ -22,12 +22,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Rx = __importStar(require("rxjs"));
 console.log('MERGEMAP DEMO');
 var innerObsCounter = 0;
-var outer = Rx.from(['#1', '#2']).pipe(Rx.delay(2000), Rx.tap(function (value) {
+// let outer: Rx.Observable<any> = Rx.from(['#1', '#2', '#3', '#4']).pipe(
+//   Rx.delay(2000),
+//   Rx.tap((value) => {
+//     console.log(value);
+//   }),
+//   Rx.finalize(() => {
+//     console.log('______Outer observable has completed.______');
+//   })
+// );
+var outer = Rx.interval(1000).pipe(Rx.tap(function (value) {
     console.log(value);
-}), Rx.finalize(function () {
+}), Rx.take(10), Rx.finalize(function () {
     console.log('______Outer observable has completed.______');
 }));
-var inner = Rx.interval(1000).pipe(Rx.take(3));
+var inner = Rx.interval(3000).pipe(Rx.take(3));
 var mergedObs = outer.pipe(Rx.mergeMap(function (outerVal) {
     var id = ++innerObsCounter;
     return inner.pipe(Rx.map(function (innerVal) {
