@@ -20,16 +20,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Rx = __importStar(require("rxjs"));
-var outer = Rx.from(['A', 'B', 'C', 'D']).pipe(Rx.delay(2000));
-// let outer = Rx.interval(4000).pipe(Rx.take(4));
-var inner = Rx.interval(1000).pipe(Rx.take(4));
+console.log('MERGEMAP DEMO');
+var innerObsCounter = 0;
+var outer = Rx.from(['#1', '#2']).pipe(Rx.delay(2000), Rx.tap(function (value) {
+    console.log(value);
+}), Rx.finalize(function () {
+    console.log('______Outer observable has completed.______');
+}));
+var inner = Rx.interval(1000).pipe(Rx.take(3));
 var mergedObs = outer.pipe(Rx.mergeMap(function (outerVal) {
+    var id = ++innerObsCounter;
     return inner.pipe(Rx.map(function (innerVal) {
-        // console.log('___________');
-        return outerVal + "-" + innerVal;
+        return "Inner Observable #" + id + " emitted            =>" + innerVal;
+    }), Rx.finalize(function () {
+        console.log("****Inner Observable #" + id + " completed.****");
     }));
 }));
 mergedObs.subscribe(function (val) {
-    // mergedObs prints (A-0 B-0 C-0 D-0) (A-1 B-1 C-1 D-1) (A-2 B-2 C-2 D-2) ...
     console.log(val);
+}, Rx.noop, function () {
+    console.log('Inner observables have also finished parallely..');
 });

@@ -20,14 +20,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Rx = __importStar(require("rxjs"));
-var outer = Rx.from(['A', 'B', 'C', 'D']);
+var innerObsCounter = 0;
+var outer = Rx.from(['#1', '#2']).pipe(Rx.tap(function (val) {
+    console.log(val);
+}), Rx.finalize(function () {
+    console.log('______Source observable completed.______');
+}));
 var inner = Rx.interval(1000).pipe(Rx.take(4));
 var concatenatedObs = outer.pipe(Rx.concatMap(function (outerVal) {
+    var id = ++innerObsCounter;
     return inner.pipe(Rx.map(function (innerVal) {
-        return outerVal + "-" + innerVal;
+        return "Inner Observable #" + id + " emitted         =>" + innerVal;
+    }), Rx.finalize(function () {
+        console.log("****Inner Observable #" + id + " completed.****");
     }));
 }));
 concatenatedObs.subscribe(function (val) {
-    // concatenatedObs prints (A-0 A-1 A-2 A-3) (B-0 B-1 B-2 B-3) (C-0 C-1 C-2 C-3) ...
     console.log(val);
+}, Rx.noop, function () {
+    console.log('Inner observables are now completed');
 });
